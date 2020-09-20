@@ -54,14 +54,18 @@ model.compile(optimizer=Adam(1e-3), loss='categorical_crossentropy',
               metrics=['accuracy'])
 
 """
-训练方式：
+训练样本构造方式：见get_batch
     每个训练样本格式：(x, y)，其中，
-    x shape (timesteps, input_dims), timesteps=6, input_dims=3001, input_dims即词汇表大小，这里采用的是one-hot形式。
-    y shape (input_dims), input_dims=3001, input_dims即词汇表大小，这里采用的是one-hot形式。
-    注意：训练过程中，x全是真实数据，即不会利用模型的预测输出来构造x。但是预测的时候，会利用之前的模型预测输出作为输入，预测后面的结果。
-    因此，训练阶段，lstm不会利用之前的模型预测输出作为输入，预测后面的结果。但是预测阶段会。
-    这里，每前6个字预测后一个字，因为一首诗不止7个字，通过滑动窗口方式(步长为1)，可以构造多个这样的训练样本。
-    batch_size是指一个batch包含多少诗，因此，一个batch内，实际的训练样本数为batch_size首诗，每首诗能够组成的样本数总和。
+        x shape (timesteps, input_dims), timesteps=6, input_dims=3001, input_dims即词汇表大小，这里采用的是one-hot形式。
+        y shape (input_dims), input_dims=3001, input_dims即词汇表大小，这里采用的是one-hot形式。
+    
+    注意
+        训练过程中，x全是真实数据，即不会利用模型的预测输出来构造x。但是预测的时候，会利用之前的模型预测输出作为输入，预测后面的结果。
+        因此，训练阶段，lstm不会利用之前的模型预测输出作为输入，预测后面的结果。但是预测阶段会。
+    
+    这里
+        每前6个字预测后一个字，因为一首诗不止7个字，通过滑动窗口方式(步长为1)，可以构造多个这样的训练样本。
+        batch_size是指一个batch包含多少诗，因此，一个batch内，实际的训练样本数为batch_size首诗，每首诗能够组成的样本数总数。
 """
 for i in range(epochs):
     predict_from_nothing(i,x_data,char2id_dict,id2char_dict,model)
