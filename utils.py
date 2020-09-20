@@ -125,7 +125,7 @@ def predict_from_nothing(epoch,x_data,char2id_dict,id2char_dict,model):
 def predict_from_head(name,x_data,char2id_dict,id2char_dict,model):
     # 根据给定的字，生成藏头诗
     if len(name) < 4:
-        for i in range(4-len(name)):
+        for _ in range(4-len(name)):
             index = np.random.randint(0,len(char2id_dict))
             while id2char_dict[index] in ['，','。',' ']:
                 index = np.random.randint(0,len(char2id_dict))
@@ -145,7 +145,7 @@ def predict_from_head(name,x_data,char2id_dict,id2char_dict,model):
     words_size = len(char2id_dict)
     index = np.random.randint(0, len(x_data))
 
-    #选取随机一首诗的最后max_len字符+给出的首个文字作为初始输入
+    #选取随机一首诗, 选取这首诗的最后若干字符(即[-unit_sentence:-1]) + 给出的首个文字作为初始输入
     sentence = np.append(x_data[index][-unit_sentence:-1],char2id_dict[name[0]])
 
     def _pred(text):
@@ -161,7 +161,7 @@ def predict_from_head(name,x_data,char2id_dict,id2char_dict,model):
         return choice_id
 
     # 首先预测出包含藏头诗第一个字的诗的前六个字
-    for i in range(5):
+    for _ in range(5):
         pred = _pred(sentence)
         sentence = np.append(sentence,pred)
 
@@ -169,7 +169,7 @@ def predict_from_head(name,x_data,char2id_dict,id2char_dict,model):
     sentence = sentence[-unit_sentence:]
     for i in range(3):
         sentence = np.append(sentence,char2id_dict[name[i+1]])
-        for i in range(5):
+        for _ in range(5):
             pred = _pred(sentence)
             sentence = np.append(sentence,pred)
 
