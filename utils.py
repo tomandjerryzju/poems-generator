@@ -72,8 +72,8 @@ def get_batch(batch_size,x_data,char2id_dict,id2char_dict):
         one_hot_x_data = []
         one_hot_y_data = []
         # 对batch_size首诗进行6to1的操作
-        for i in range(batch_size):
-            batch_i = (batch_i+1)%n
+        for _ in range(batch_size):
+            batch_i = (batch_i + 1) % n
             inputs,targets = get_6to1(x_data[batch_i],char2id_dict)
             for j in range(len(inputs)):
                 one_hot_x_data.append(inputs[j])
@@ -98,7 +98,7 @@ def predict_from_nothing(epoch,x_data,char2id_dict,id2char_dict,model):
     print("\n#-----------------------Epoch {}-----------------------#".format(epoch))
     words_size = len(id2char_dict)
 
-    # 随机取一首诗的开头6个字符，进行后面的预测
+    # 随机取一首诗，然后取这首诗的开头6个字符，进行后面的预测
     index = np.random.randint(0, len(x_data))
     sentence = x_data[index][:unit_sentence]
 
@@ -108,13 +108,13 @@ def predict_from_nothing(epoch,x_data,char2id_dict,id2char_dict,model):
         for t, index in enumerate(temp):
             x_pred[0, t, index] = 1.
         preds = model.predict(x_pred)[0]
-        choice_id = np.random.choice(range(len(preds)),1,p=preds)
+        choice_id = np.random.choice(range(len(preds)),1,p=preds)   # 按照preds中的概率，从0~3000中选择一个id
         if id2char_dict[choice_id[0]] == ' ':
             while id2char_dict[choice_id[0]] in ['，','。',' ']:
                 choice_id = np.random.randint(0,len(char2id_dict),1)
         return choice_id
     # 一个字一个字的往后预测
-    for i in range(24-unit_sentence):
+    for i in range(24-unit_sentence):   # 24表示，整首诗是一首4句五言诗，每句诗一共6个词(包含标点符号)，因此一共24个字。因为输入开头的6个字，因此只需要预测后面的18个字即可。预测方式是，每前6个字预测后面1个字。
         pred = _pred(sentence)
         sentence = np.append(sentence,pred)
     output = ""
