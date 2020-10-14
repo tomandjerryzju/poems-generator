@@ -23,6 +23,11 @@ inputs = Input(shape=(None,words_size))  # inputs shape: (batch_size, timesteps,
 # 当定义了LSTM输入的timesteps，输入仍然是按照顺序输入每个时间步的token到LSTM中，当然，这个过程是自动完成的。
 # 但是，要注意，给LSTM输入一个时间步的输入，虽然它是RNN，但是不会自动无限循环下去，因为这是数字编程方式。因此，如果定义了LSTM输入的timesteps，那么，LSTM只会执行
 # 前向计算timesteps次。如果timesteps=1，那么LSTM只会执行前向计算1次。
+
+"""
+如果多个LSTM堆叠，那么除了最后一个LSTM，其他的LSTM的return_sequences必须等于True。
+因为前面的LSTM的输出要作为后面的LSTM的输入，LSTM的输入是3维的，需要全部时间步的数据。
+"""
 x = LSTM(UNITS,return_sequences=True)(inputs)
 x = Dropout(0.6)(x)
 x = LSTM(UNITS)(x)
